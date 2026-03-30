@@ -12,12 +12,21 @@ if (yearElement) {
   yearElement.textContent = String(new Date().getFullYear());
 }
 
-const revealElements = document.querySelectorAll("[data-reveal]");
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const siteHeader = document.querySelector(".site-header");
+const updateHeaderState = () => {
+  if (!siteHeader) return;
+  siteHeader.classList.toggle("is-scrolled", window.scrollY > 8);
+};
 
-if ("IntersectionObserver" in window && !reducedMotion) {
+window.addEventListener("scroll", updateHeaderState, { passive: true });
+updateHeaderState();
+
+const revealElements = document.querySelectorAll("[data-reveal]");
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+if ("IntersectionObserver" in window && !prefersReducedMotion) {
   revealElements.forEach((element, index) => {
-    element.style.transitionDelay = `${Math.min(index * 30, 220)}ms`;
+    element.style.transitionDelay = `${Math.min(index * 70, 280)}ms`;
   });
 
   const revealObserver = new IntersectionObserver(
@@ -36,16 +45,3 @@ if ("IntersectionObserver" in window && !reducedMotion) {
 } else {
   revealElements.forEach((element) => element.classList.add("is-visible"));
 }
-
-const siteHeader = document.querySelector(".site-header");
-function updateHeaderState() {
-  if (!siteHeader) return;
-  if (window.scrollY > 8) {
-    siteHeader.classList.add("is-scrolled");
-  } else {
-    siteHeader.classList.remove("is-scrolled");
-  }
-}
-
-window.addEventListener("scroll", updateHeaderState, { passive: true });
-updateHeaderState();
